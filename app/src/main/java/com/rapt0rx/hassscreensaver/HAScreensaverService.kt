@@ -2,72 +2,67 @@ package com.rapt0rx.hassscreensaver
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
+import android.graphics.Color
 import android.service.dreams.DreamService
 import android.view.ViewGroup
-import android.webkit.WebSettings
+import android.webkit.CookieManager
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
 class HAScreensaverService : DreamService() {
-
-    private var webView: WebView? = null
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        isInteractive = true
-        isFullscreen = true
-    }
+    private var dashboard: WebView? = null
 
     @SuppressLint("SetJavaScriptEnabled")
-    override fun onDreamingStarted() {
-        super.onDreamingStarted()
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        isInteractive = false
+        isFullscreen = true
+        isScreenBright = false
 
         val prefs = getSharedPreferences("ha_prefs", Context.MODE_PRIVATE)
-        val haUrl = prefs.getString("ha_url", "http://homeassistant.local:8123") ?: "http://homeassistant.local:8123"
+        val url = prefs.getString("ha_url", "http://homeassistant.local:8123")
 
-        webView = WebView(this).apply {
-            layoutParams = ViewGroup.LayoutParams(
+        if (url.isNullOrBlank()) {
+            finish()
+            return
+        }
+
+        val web = WebView(this).apply {
+            setBackgroundColor(Color.BLACK)
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
+            settings.databaseEnabled = true
+            settings.loadsImagesAutomatically = true
+            settings.useWideViewPort = true
+            settings.loadWithOverviewMode = true
+            CookieManager.getInstance().setAcceptCookie(true)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+            webViewClient = WebViewClient()
+            webChromeClient = WebChromeClient()
+            isFocusable = false
+            isFocusableInTouchMode = false
+        }
+
+        dashboard = web
+        setContentView(
+            web,
+            ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-
-            settings.apply {
-                javaScriptEnabled = true
-                domStorageEnabled = true
-                databaseEnabled = true
-                useWideViewPort = true
-                loadWithOverviewMode = true
-                mediaPlaybackRequiresUserGesture = false
-                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                cacheMode = WebSettings.LOAD_DEFAULT
-                userAgentString = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}; Mi Box S) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-            }
-
-            webViewClient = object : WebViewClient() {
-                override fun onReceivedError(
-                    view: WebView?,
-                    errorCode: Int,
-                    description: String?,
-                    failingUrl: String?
-                ) {
-                    super.onReceivedError(view, errorCode, description, failingUrl)
-                }
-            }
-        }
-
-        setContentView(webView)
-        webView?.loadUrl(haUrl)
+        )
+        web.loadUrl(url)
     }
 
     override fun onDreamingStopped() {
-        super.onDreamingStopped()
-        webView?.apply {
+        dashboard?.apply {
             stopLoading()
-            clearHistory()
+            loadUrl("about:blank")
             removeAllViews()
             destroy()
         }
-        webView = null
+        dashboard = null
+        super.onDreamingStopped()
     }
 }

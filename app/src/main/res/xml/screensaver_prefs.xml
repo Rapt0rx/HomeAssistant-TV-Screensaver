@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<screensaver xmlns:android="http://schemas.android.com/apk/res/android"
+<dream xmlns:android="http://schemas.android.com/apk/res/android"
     android:settingsActivity="com.rapt0rx.hassscreensaver/.SettingsActivity" />
