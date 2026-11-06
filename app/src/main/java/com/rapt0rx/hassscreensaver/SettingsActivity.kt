@@ -31,8 +31,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val help = TextView(this).apply {
-            text = "Enter the full address of the dashboard to show, using your " +
-                "Home Assistant's IP address, e.g.\nhttp://192.168.1.100:8123/lovelace-tv/0\n\n" +
+            text = "Enter the full address of the dashboard to show, e.g.\n" +
+                "https://yourname.duckdns.org:8123/lovelace-tv/0\n" +
+                "(or an http://192.168.x.x:8123 address on your home network)\n\n" +
                 "Then choose \"Save & sign in\" once so the screensaver is logged in. " +
                 "Finally pick \"Home Assistant Screensaver\" under Settings > Device " +
                 "Preferences > Screen saver."
@@ -42,7 +43,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         urlInput = EditText(this).apply {
-            hint = "http://192.168.1.100:8123"
+            hint = "https://yourname.duckdns.org:8123"
             setText(Prefs.getUrl(this@SettingsActivity))
             setSingleLine(true)
         }
