@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HA TV Screensaver</string>
+    <string name="screensaver_name">Home Assistant Screensaver</string>
+    <string name="settings_title">Configure Home Assistant URL</string>
+</resources>
