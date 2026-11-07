@@ -18,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class LoginActivity : AppCompatActivity() {
 
+    companion object {
+        const val EXTRA_PREVIEW = "preview"
+    }
+
     private var web: WebView? = null
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -41,7 +45,9 @@ class LoginActivity : AppCompatActivity() {
 
         Toast.makeText(
             this,
-            "Sign in, wait for the dashboard, then press Back",
+            if (intent.getBooleanExtra(EXTRA_PREVIEW, false))
+                "Dashboard preview. Press Back to return."
+            else "Sign in, wait for the dashboard, then press Back",
             Toast.LENGTH_LONG
         ).show()
     }
