@@ -1,6 +1,7 @@
 package com.rapt0rx.hassscreensaver
 
 import android.content.Context
+import java.net.URI
 
 object Prefs {
     private const val FILE = "ha_prefs"
@@ -17,5 +18,12 @@ object Prefs {
     }
 
     fun isValid(url: String): Boolean =
-        url.startsWith("http://") || url.startsWith("https://")
+        try {
+            val uri = URI(url)
+            uri.scheme?.lowercase() in setOf("http", "https") &&
+                !uri.host.isNullOrBlank() && uri.rawUserInfo == null &&
+                (uri.port == -1 || uri.port in 1..65535)
+        } catch (_: Exception) {
+            false
+        }
 }

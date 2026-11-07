@@ -1,12 +1,15 @@
 package com.rapt0rx.hassscreensaver
 
 import android.content.Intent
+import android.content.ActivityNotFoundException
+import android.provider.Settings
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -60,12 +63,32 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        val previewButton = Button(this).apply {
+            text = getString(R.string.preview_dashboard)
+            setOnClickListener {
+                if (saveUrl()) startActivity(Intent(this@SettingsActivity, LoginActivity::class.java)
+                    .putExtra(LoginActivity.EXTRA_PREVIEW, true))
+            }
+        }
+        val screensaverButton = Button(this).apply {
+            text = getString(R.string.open_screensaver_settings)
+            setOnClickListener {
+                try {
+                    startActivity(Intent(Settings.ACTION_DREAM_SETTINGS))
+                } catch (_: ActivityNotFoundException) {
+                    Toast.makeText(this@SettingsActivity, R.string.settings_unavailable, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
         layout.addView(title)
         layout.addView(help)
         layout.addView(urlInput)
         layout.addView(saveButton)
         layout.addView(loginButton)
-        setContentView(layout)
+        layout.addView(previewButton)
+        layout.addView(screensaverButton)
+        setContentView(ScrollView(this).apply { isFillViewport = true; addView(layout) })
 
         urlInput.requestFocus()
     }
@@ -73,11 +96,13 @@ class SettingsActivity : AppCompatActivity() {
     private fun saveUrl(): Boolean {
         val input = urlInput.text.toString().trim()
         return if (Prefs.isValid(input)) {
+            urlInput.error = null
             Prefs.setUrl(this, input)
             Toast.makeText(this, "URL saved", Toast.LENGTH_SHORT).show()
             true
         } else {
-            Toast.makeText(this, "Enter a valid http:// or https:// URL", Toast.LENGTH_LONG).show()
+            urlInput.error = getString(R.string.invalid_url)
+            urlInput.requestFocus()
             false
         }
     }

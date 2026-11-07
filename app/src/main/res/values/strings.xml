@@ -3,4 +3,10 @@
     <string name="screensaver_name">Home Assistant Screensaver</string>
     <string name="settings_title">Home Assistant Screensaver</string>
     <string name="login_title">Sign in to Home Assistant</string>
+    <string name="connecting">Connecting to Home Assistant…</string>
+    <string name="connection_retry">Cannot load dashboard. Retrying in %1$d seconds…</string>
+    <string name="preview_dashboard">Preview dashboard</string>
+    <string name="open_screensaver_settings">Open screensaver settings</string>
+    <string name="settings_unavailable">Open your TV settings and select Home Assistant Screensaver under Screen saver.</string>
+    <string name="invalid_url">Enter a full http:// or https:// address with a valid hostname and port.</string>
 </resources>
